@@ -13,6 +13,7 @@ public:
 	vector<TreeNode*> ptrs;
 
 	void insert();
+	void findnode();
 	
 	TreeNode() {}
 	~TreeNode() {}
