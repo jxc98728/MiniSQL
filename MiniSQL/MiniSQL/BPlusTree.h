@@ -3,16 +3,17 @@
 
 using namespace std;
 
-template<typename T>
+template<typename KeyType>
 class TreeNode {
 public:
 	int size;
 	int degree;
-	int type_bytes;
 	
-	vector<T> keys;
+	vector<KeyType> keys;
 	vector<TreeNode*> ptrs;
+
+	void insert();
 	
-	TreeNode(); // calculate degree
-	~TreeNode();
+	TreeNode() {}
+	~TreeNode() {}
 };
