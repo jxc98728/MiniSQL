@@ -1,8 +1,8 @@
 #pragma once
 #include <vector>
-
 using namespace std;
 
+/* TreeNode:base class of nodes of BPlusTree */
 template<typename T>
 class TreeNode {
 public:
