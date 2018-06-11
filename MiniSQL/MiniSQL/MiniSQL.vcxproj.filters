@@ -24,6 +24,9 @@
     <ClCompile Include="MiniSQL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="BPlusTree.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MiniSQL.h">

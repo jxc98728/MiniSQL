@@ -115,6 +115,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="BPlusTree.cpp" />
     <ClCompile Include="BufferManager.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MiniSQL.cpp" />
