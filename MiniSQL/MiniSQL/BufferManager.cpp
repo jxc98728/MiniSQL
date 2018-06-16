@@ -35,22 +35,20 @@ Block BufferManager::readBlock(string table, int offset)
 	Block block(table);
 	string path = table + ".dat";
 	fstream File;
-	File.open(path, std::fstream::in | std::fstream::out);
-
-	// read block head
-	File.seekg(offset);
-	File.read(block.tableName, TABLE_NAME_LENGTH);
-	File.read((char *)&(block.size), sizeof(int));
-	File.read((char *)&(block.isDirty), sizeof(bool));
-	File.read((char *)&(block.offset), sizeof(int));
-	File.read((char *)&(block.nextOffset), sizeof(int));
+	File.open(path, ios::in | ios::out | ios::binary);
 
 	// read the block according to offset
-	File.seekg(offset + BLOCK_HEAD);
+	File.seekg(offset);
 	File.read(block.content, BLOCK_SIZE);
 
 	//还没改动自然not dirty
 	block.isDirty = false;
+	block.offset = offset;
+	block.tableName = table;
+
+	block.size = strlen(block.content);
+	
+	File.close();
 	return block;
 }
 
@@ -59,8 +57,13 @@ void BufferManager::writeBlock(Block & block)
 {
 	string path(block.tableName);
 	path += ".dat";
+
 	fstream file;
-	file.open(path, std::fstream::in | std::fstream::out);
+	file.open(path, ios::in | ios::out | ios::binary );
+	if (!file.good()) {
+		cerr << "Fail to open file:" << path << endl;
+	}
+
 	if (block.isDirty) {
 		block.isDirty = false;//写回后就不是脏数据了
 	}
@@ -70,16 +73,13 @@ void BufferManager::writeBlock(Block & block)
 
 	//write block head
 	file.seekp(block.offset);//通过offset确定写block在文件中位置
-	file.write(block.tableName, TABLE_NAME_LENGTH);
-	file.write((char *)&(block.size), sizeof(int));
-	file.write((char *)&(block.isDirty), sizeof(bool));
-	file.write((char *)&(block.offset), sizeof(int));
-	file.write((char *)&(block.nextOffset), sizeof(int));
 
 	//write back block content
-	file.seekp(block.offset + BLOCK_HEAD);//预留100字符位作为block head
+
+	file.seekp(block.offset);//预留100字符位作为block head
 	file.write(block.content, BLOCK_SIZE);
 
+	file.close();
 	return;
 }
 
