@@ -2,6 +2,7 @@
 	CatalogManager负责管理数据库所有的模式信息，包括：
 	表信息、属性信息、索引信息，并提供访问和操作这些信息的接口，
 	供Interpreter和API模块使用
+	文件规定："Tables.dat"存储表信息，"Indexes.dat"存储索引信息
 	TODO:考虑下单独列出 metadata
 */
 #pragma once
@@ -15,13 +16,12 @@ using namespace std;
 class CatalogManager
 {
 public:
-	string dbName;
 	vector<Table> tables;
 	vector<Index> indexes;
 	int tableNum;
 	int indexNum;
 public:
-	CatalogManager(string db);//读取log文件
+	CatalogManager();//读取log文件
 	void readTables(); //从已有的log文件中从构造tables
 	void readIndexes();
 	void writeTables();

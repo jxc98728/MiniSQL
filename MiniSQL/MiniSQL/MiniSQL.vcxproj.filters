@@ -27,6 +27,21 @@
     <ClCompile Include="BPlusTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="CatalogManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="test.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="RecordManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="IndexManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="API.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MiniSQL.h">
@@ -36,6 +51,18 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BufferManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="CatalogManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RecordManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IndexManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="API.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

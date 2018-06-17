@@ -6,12 +6,12 @@ using namespace std;
 
 Block::Block(string table)
 {
-	strcpy(tableName, table.c_str());
+	tableName = table;
 }
 
 Block::Block(string table, int loc)
 {
-	strcpy(tableName, table.c_str());
+	tableName = table;
 	offset = loc;
 	nextOffset = 0;
 	size = 0;
@@ -19,10 +19,11 @@ Block::Block(string table, int loc)
 	memset(content, 0, BLOCK_SIZE);
 }
 
-int Block::setContent(uint8_t * data, int length)
+int Block::setContent(char* data, int length)
 {
 	if (size + length <= BLOCK_SIZE) {
-		memcpy(content + size, data, size);
+		memcpy(content + size, data, length);
+		size += length;
 		return 1;
 	}
 	else return 0;
@@ -37,6 +38,3 @@ char * Block::getContent()
 {
 	return content;
 }
-
-Block::~Block()
-{ }

@@ -25,11 +25,10 @@ using namespace std;
 class BufferManager
 {
 public:
-	string dbName;
 	list<Block> buffer; //数据缓冲区
 
 public: //构造&析构
-	BufferManager(string db);
+	BufferManager() = default;
 	//析构函数要写回所有脏块
 	~BufferManager();
 

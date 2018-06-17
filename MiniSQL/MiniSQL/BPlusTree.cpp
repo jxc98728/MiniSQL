@@ -15,7 +15,7 @@ int TreeNode<T>::insert(T & key, int offset)
 }
 
 template<typename T>
-TreeNode * TreeNode<T>::split(T & key)
+TreeNode<T> * TreeNode<T>::split(T & key)
 {
 	return nullptr;
 }

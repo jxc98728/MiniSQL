@@ -1,11 +1,6 @@
 #include "BufferManager.h"
 using namespace std;
 
-BufferManager::BufferManager(string db)
-{
-	dbName = db;
-}
-
 BufferManager::~BufferManager()
 {
 	allWrite();//写回脏数据到文件

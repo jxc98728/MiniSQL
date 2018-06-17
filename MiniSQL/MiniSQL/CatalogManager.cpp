@@ -2,8 +2,7 @@
 #include <fstream>
 using namespace std;
 
-CatalogManager::CatalogManager(string db)
-	:dbName(db)
+CatalogManager::CatalogManager()
 {
 	readTables();
 	readIndexes();
@@ -11,13 +10,12 @@ CatalogManager::CatalogManager(string db)
 
 void CatalogManager::readTables()
 {
-	string fileName = dbName + ".table";
+	string fileName = "Tables.dat";
 	fstream file(fileName);
 	file >> tableNum;
-	//读入.table中的信息到vector<Table>中
+	//读入Tables.dat中的信息到vector<Table>中
 	Table table;
 	Attribute attribute;
-	table.dbName = dbName;
 	int type;
 	for (int i = 0; i < tableNum; i++) {
 		file >> table.name;
@@ -39,7 +37,7 @@ void CatalogManager::readTables()
 
 void CatalogManager::readIndexes()
 {
-	string fileName = dbName + ".index";
+	string fileName = "Indexes.dat";
 	fstream file(fileName);
 	file >> indexNum;
 	//读入.index中的信息到vector<Index>中
@@ -58,7 +56,7 @@ void CatalogManager::readIndexes()
 
 void CatalogManager::writeTables()
 {
-	string fileName = dbName + ".table";
+	string fileName = "Tables.dat";
 	fstream  file(fileName);
 	file << tableNum << endl;
 	//在.table中写入当前Manager中的表信息
@@ -85,7 +83,7 @@ void CatalogManager::writeTables()
 
 void CatalogManager::writeIndexes()
 {
-	string fileName = dbName + ".index";
+	string fileName = "Indexes.dat";
 	fstream file(fileName);
 	file << indexNum << endl;
 	//在.index中写入当前Manager中的索引信息
