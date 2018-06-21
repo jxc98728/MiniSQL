@@ -12,7 +12,6 @@ using namespace std;
 #define INT 0;
 #define FLOAT 1;
 #define CHAR 2;
-#define NULL 3;
 #define BLOCK_SIZE 4096 /* block of size 4K bytes */
 
 /* Attribute consisting the info of type/length/primary key/unique */
@@ -49,6 +48,7 @@ public:
 	int recNum;
 	int recLength; //length of a record
 	int blockNum;
+	int fileTail; //文件尾的offset作为Block读取的参考
 	Table() = default;
 	Table(string n, int attrNum, std::vector<Attribute> attrs)
 		: name(n), attriNum(attrNum), attributes(attrs), recNum(0), blockNum(0)

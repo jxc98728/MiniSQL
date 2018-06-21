@@ -15,7 +15,7 @@ Block::Block()
 Block::Block(string table)
 {
 	tableName = table;
-	blockid = -1;//判断时如果blockid < 0就说明为空block，不用写回
+	blockid = -1;//判断时如果blockid < 0就说明为空block或，不用写回
 	size = 0;
 	isDirty = false;
 	memset(content, 0, BLOCK_SIZE);
@@ -25,9 +25,9 @@ Block::Block(string table)
 Block::Block(string table, int blockid)
 {
 	tableName = table;
-	blockid = blockid;
+	this->blockid= blockid;
 	size = 0;
-	isDirty = true;
+	isDirty = false;
 	memset(content, 0, BLOCK_SIZE);
 }
 
@@ -50,6 +50,7 @@ void Block::setDirty()
 char * Block::getContent(int start, int bytes)
 {
 	char result[BLOCK_SIZE];
-	memcpy(result, content + start, bytes);
+	memset(result, 0, BLOCK_SIZE);
+	memcpy(result, content + start + 1, bytes);//start为带valid byte的数据段
 	return result;
 }

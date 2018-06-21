@@ -6,11 +6,11 @@ BufferManager::~BufferManager()
 	allWrite();//写回脏数据到文件
 }
 
-Block & BufferManager::findBlk(string table, int offset)
+Block & BufferManager::findBlk(Table table, int offset)
 {
 	//先在buffer中查找，如果找到将其提到list最前
 	for (list<Block>::iterator i = buffer.begin(); i != buffer.end(); i++) {
-		if (i->tableName == table && offset >= i->offset && offset <= i->nextOffset) {
+		if (i->tableName == table.name && offset >= i->blockid*BLOCK_SIZE && offset <= (i->blockid + 1)*BLOCK_SIZE) {
 			buffer.splice(buffer.begin(), buffer, i, std::next(i));
 			return (buffer.front());
 		}
@@ -25,24 +25,24 @@ Block & BufferManager::findBlk(string table, int offset)
 	return (buffer.front());//返回队列最前的block
 }
 
-Block BufferManager::readBlock(string table, int offset)
+Block BufferManager::readBlock(Table table, int blockid)
 {
-	Block block(table);
-	string path = table + ".dat";
+	Block block(table.name,blockid);
+	string path = table.name + ".dat";
 	fstream File;
-	File.open(path, ios::in | ios::out | ios::binary);
+	//file以二进制进行读写
+	File.open(path, ios::in | ios::out | ios::binary );
 
-	// read the block according to offset
-	File.seekg(offset);
+	// read the block according to blockid
+	File.seekg(blockid * BLOCK_SIZE);
 	File.read(block.content, BLOCK_SIZE);
-
 	//还没改动自然not dirty
 	block.isDirty = false;
-	block.offset = offset;
-	block.tableName = table;
-
-	block.size = strlen(block.content);
-	
+	if (blockid != table.blockNum - 1)
+		block.size = BLOCK_SIZE;
+	else {
+		block.size = table.fileTail % BLOCK_SIZE;
+	}
 	File.close();
 	return block;
 }
@@ -52,30 +52,22 @@ void BufferManager::writeBlock(Block & block)
 {
 	string path(block.tableName);
 	path += ".dat";
-
 	fstream file;
+	//file以二进制进行读写
 	file.open(path, ios::in | ios::out | ios::binary );
 	if (!file.good()) {
 		cerr << "Fail to open file:" << path << endl;
 	}
-
 	if (block.isDirty) {
 		block.isDirty = false;//写回后就不是脏数据了
 	}
 	else {
-		return; //不需要写回
+		return ; //不需要写回
 	}
-
-	//write block head
-	file.seekp(block.offset);//通过offset确定写block在文件中位置
-
-	//write back block content
-
-	file.seekp(block.offset);//预留100字符位作为block head
+	file.seekp(block.blockid * BLOCK_SIZE);
 	file.write(block.content, BLOCK_SIZE);
-
 	file.close();
-	return;
+	return ;
 }
 
 void BufferManager::allWrite()
