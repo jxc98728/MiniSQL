@@ -37,8 +37,9 @@ bool Block::insertRecord(char *src, int length)
 	if (length + size + 1 > BLOCK_SIZE) {
 		return false;
 	}
-	memset(content, 1, 1);
+	memset(content + size, 1, 1);
 	memcpy(content + size + 1, src, length);
+	size += (length + 1);
 	return true;
 }
 
@@ -47,10 +48,48 @@ void Block::setDirty()
 	isDirty = true;
 }
 
+void Block::show()
+{
+	cout << "Table: " << tableName << " Blockid: " << blockid << endl;
+	cout << "Already used size: " << size << "   " << "isDirty: " << isDirty << endl;
+}
+
 char * Block::getContent(int start, int bytes)
 {
 	char result[BLOCK_SIZE];
 	memset(result, 0, BLOCK_SIZE);
 	memcpy(result, content + start + 1, bytes);//start为带valid byte的数据段
 	return result;
+}
+
+void Table::show()
+{
+	cout << "table " << name << ":" << attriNum << " attributes" << endl;
+	for (auto elem : attributes) {
+		elem.show();
+	}
+}
+
+void Attribute::show()
+{
+	cout << name;
+	switch (type)
+	{
+	case 0:
+		cout << " int";
+		break;
+	case 1:
+		cout << " float";
+		break;
+	case 2:
+		cout << " char(" << charlength << ")";
+		break;
+	}
+	if (PK) {
+		cout << " Primary Key";
+	}
+	else if(unique){
+		cout << " Unique";
+	}
+	cout << endl;
 }

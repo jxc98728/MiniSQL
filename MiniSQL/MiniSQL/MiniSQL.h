@@ -37,6 +37,7 @@ public:
 			return  charlength + 1;
 		}
 	}
+	void show();
 };
 
 /* Table class in CatalogManager, only table info without records */
@@ -50,6 +51,9 @@ public:
 	int blockNum;
 	int fileTail; //文件尾的offset作为Block读取的参考
 	Table() = default;
+	Table(string n)
+		: name(n)
+	{ };
 	Table(string n, int attrNum, std::vector<Attribute> attrs)
 		: name(n), attriNum(attrNum), attributes(attrs), recNum(0), blockNum(0)
 	{
@@ -58,6 +62,7 @@ public:
 			length += elem.size();
 		recLength = length;
 	}
+	void show();
 };
 
 /* index class in IndexManager, information of a index created */
@@ -78,6 +83,7 @@ public:
 /* Block类用于buffermanager中缓存的写入与读取,大小为4K bytes
    4K byte为真实大小，实际文件用二进制文件读写，方便确定位置
    文件中只存真实数据，一条Record的组成为Valid Byte + Record */
+
 class Block {
 public:
 	string tableName; //block对应的表名
@@ -92,6 +98,7 @@ public:
 	Block(string table, int blockid);
 	bool insertRecord(char* src, int length);
 	void setDirty(); //isDirty = 1
+	void show();
 	char* getContent(int start, int bytes);//读取块内数据
 	~Block() = default;//在写回文件后析构Block
 };

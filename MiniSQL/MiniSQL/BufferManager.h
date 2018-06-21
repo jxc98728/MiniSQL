@@ -30,6 +30,7 @@ public: //构造&析构
 
 public: //先在buffer中查找块，找不到则从文件读到buffer
 	Block & findBlk(Table table, int offset);//这里offset是record的绝对offset
+	void block2buf(Block &block); //将一个块用LRU规则加载至buffer中
 
 public: //buffermanager <-> file BLOCK读写
 	Block readBlock(Table table, int blockid);

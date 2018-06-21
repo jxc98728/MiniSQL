@@ -25,6 +25,20 @@ Block & BufferManager::findBlk(Table table, int offset)
 	return (buffer.front());//返回队列最前的block
 }
 
+void BufferManager::block2buf(Block & block)
+{
+	//先在buffer中查找，如果找到将其提到list最前
+	for (list<Block>::iterator i = buffer.begin(); i != buffer.end(); i++) {
+		if (i->tableName == block.tableName && i->blockid == block.blockid) {
+			buffer.splice(buffer.begin(), buffer, i, std::next(i));
+			return;
+		}
+	}
+	//此时buffer中没有该块，则将block直接放到list的head位置
+	buffer.push_front(block);
+	return;
+}
+
 Block BufferManager::readBlock(Table table, int blockid)
 {
 	Block block(table.name,blockid);
@@ -43,6 +57,7 @@ Block BufferManager::readBlock(Table table, int blockid)
 	else {
 		block.size = table.fileTail % BLOCK_SIZE;
 	}
+	block2buf(block); //写入buffer缓冲区
 	File.close();
 	return block;
 }
