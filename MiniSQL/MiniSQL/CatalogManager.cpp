@@ -10,7 +10,7 @@ CatalogManager::CatalogManager()
 
 void CatalogManager::readTables()
 {
-	string fileName = "Tables.dat";
+	string fileName = "Tables.log";
 	fstream file(fileName);
 	file >> tableNum;
 	//读入Tables.dat中的信息到vector<Table>中
@@ -20,12 +20,13 @@ void CatalogManager::readTables()
 	for (int i = 0; i < tableNum; i++) {
 		file >> table.name;
 		file >> table.attriNum;
+		file >> table.fileTail;
 		file >> table.blockNum;
 		//读入表中记录的attributes及信息
 		for (int j = 0; j < table.attriNum; j++) {
 			file >> attribute.name;
 			file >> attribute.type;
-			file >> attribute.length;
+			file >> attribute.charlength;
 			file >> attribute.PK;
 			file >> attribute.unique;
 			table.attributes.push_back(attribute);
@@ -37,7 +38,7 @@ void CatalogManager::readTables()
 
 void CatalogManager::readIndexes()
 {
-	string fileName = "Indexes.dat";
+	string fileName = "Indexes.log";
 	fstream file(fileName);
 	file >> indexNum;
 	//读入.index中的信息到vector<Index>中
@@ -56,7 +57,7 @@ void CatalogManager::readIndexes()
 
 void CatalogManager::writeTables()
 {
-	string fileName = "Tables.dat";
+	string fileName = "Tables.log";
 	fstream  file(fileName);
 	file << tableNum << endl;
 	//在.table中写入当前Manager中的表信息
@@ -65,6 +66,7 @@ void CatalogManager::writeTables()
 	{
 		file << tables[i].name << " ";
 		file << tables[i].attriNum << " ";
+		file << tables[i].fileTail << " ";
 		file << tables[i].blockNum << endl;
 		//写入单个表的所有属性信息
 		//一个attribute一行
@@ -72,7 +74,7 @@ void CatalogManager::writeTables()
 		{
 			file << tables[i].attributes[j].name << " ";
 			file << tables[i].attributes[j].type << " ";
-			file << tables[i].attributes[j].length << " ";
+			file << tables[i].attributes[j].charlength << " ";
 			file << tables[i].attributes[j].PK << " ";
 			file << tables[i].attributes[j].unique << endl;
 		}
@@ -83,7 +85,7 @@ void CatalogManager::writeTables()
 
 void CatalogManager::writeIndexes()
 {
-	string fileName = "Indexes.dat";
+	string fileName = "Indexes.log";
 	fstream file(fileName);
 	file << indexNum << endl;
 	//在.index中写入当前Manager中的索引信息

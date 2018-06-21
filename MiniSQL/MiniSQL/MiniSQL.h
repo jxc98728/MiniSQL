@@ -55,7 +55,7 @@ public:
 		: name(n)
 	{ };
 	Table(string n, int attrNum, std::vector<Attribute> attrs)
-		: name(n), attriNum(attrNum), attributes(attrs), recNum(0), blockNum(0)
+		: name(n), attriNum(attrNum), attributes(attrs), recNum(0), blockNum(0),fileTail(0)
 	{
 		int length = 0;
 		for (auto elem : attrs)
