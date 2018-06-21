@@ -3,30 +3,43 @@
 #include <iostream>
 using namespace std;
 
+Block::Block()
+{
+	tableName = "NULL"; //标记空表
+	blockid = -1;//判断时如果blockid < 0就说明为空block，不用写回
+	size = 0;
+	isDirty = false;
+	memset(content, 0, BLOCK_SIZE);
+}
 
 Block::Block(string table)
 {
 	tableName = table;
+	blockid = -1;//判断时如果blockid < 0就说明为空block，不用写回
+	size = 0;
+	isDirty = false;
+	memset(content, 0, BLOCK_SIZE);
 }
 
-Block::Block(string table, int loc)
+//确认了table和blockid就可以实际读取
+Block::Block(string table, int blockid)
 {
 	tableName = table;
-	offset = loc;
-	nextOffset = 0;
+	blockid = blockid;
 	size = 0;
 	isDirty = true;
 	memset(content, 0, BLOCK_SIZE);
 }
 
-int Block::setContent(char* data, int length)
+//将record转为二进制存于char content[4096]中，返回块是否够插入
+bool Block::insertRecord(char *src, int length)
 {
-	if (size + length <= BLOCK_SIZE) {
-		memcpy(content + size, data, length);
-		size += length;
-		return 1;
+	if (length + size + 1 > BLOCK_SIZE) {
+		return false;
 	}
-	else return 0;
+	memset(content, 1, 1);
+	memcpy(content + size + 1, src, length);
+	return true;
 }
 
 void Block::setDirty()
@@ -34,7 +47,9 @@ void Block::setDirty()
 	isDirty = true;
 }
 
-char * Block::getContent()
+char * Block::getContent(int start, int bytes)
 {
-	return content;
+	char result[BLOCK_SIZE];
+	memcpy(result, content + start, bytes);
+	return result;
 }

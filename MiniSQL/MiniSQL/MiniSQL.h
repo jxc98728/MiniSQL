@@ -1,7 +1,8 @@
 #pragma once
 /*
 	注意在程序中尽量用string操作，对文件中的数据用二进制进行读取和写入
-	Minisql.h定义了其他Manager中需要用到的基本类，当前.h为初稿，按需改动
+	Minisql.h定义了其他Manager中需要用到的基本类
+	
 */
 #include <iostream>
 #include <vector>
@@ -74,22 +75,24 @@ public:
 };
 
 
-/* Block类用于buffermanager中缓存的写入与读取,大小为4K bytes */
+/* Block类用于buffermanager中缓存的写入与读取,大小为4K bytes
+   4K byte为真实大小，实际文件用二进制文件读写，方便确定位置
+   文件中只存真实数据，一条Record的组成为Valid Byte + Record */
 class Block {
 public:
-	string tableName; //block对应的表名称
+	string tableName; //block对应的表名
+	int blockid ; //当前block在对应的文件中的标号
 	int size; //当前block已用空间的大小
 	bool isDirty; //isDirty = 1表示有待写回文件
-	//bool isDelete; //isDelete = 1表示块已经被删除
-	int offset; //当前block在文件中的偏移量
-	int nextOffset; //下一块block在文件中的偏移量
-	char content[4096]; //block中的数据 char[4096]
-	Block() = default;
+	char content[BLOCK_SIZE]; //block中的数据 char[4096]
+
+public:
+	Block();
 	Block(string table);
-	Block(string table, int loc);
-	int setContent(char* data, int length); //在当前content基础上增加数据,返回0代表当前块已满
+	Block(string table, int blockid);
+	bool insertRecord(char* src, int length);
 	void setDirty(); //isDirty = 1
-	char* getContent();//读取块内数据
+	char* getContent(int start, int bytes);//读取块内数据
 	~Block() = default;//在写回文件后析构Block
 };
 
