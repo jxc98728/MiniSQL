@@ -1,6 +1,7 @@
 /* MiniSQL.h中定义的类的函数实现 */
 #include "MiniSQL.h"
 #include <iostream>
+#include <sstream>
 using namespace std;
 
 Block::Block()
@@ -93,3 +94,77 @@ void Attribute::show()
 	}
 	cout << endl;
 }
+
+//string -> int(四字节char)
+char* string2int(string s)
+{
+	union Char_Int {
+		char b[4];
+		int a;
+	} char_int;
+	int i = atoi(s.c_str());
+	char_int.a = i;
+	return char_int.b;
+}
+
+//string -> float(四字节char)s
+char * string2float(string s)
+{
+	union Char_Float {
+		char b[4];
+		float a;
+	} char_float;
+	float i = atof(s.c_str());
+	char_float.a = i;
+	return char_float.b;
+}
+
+string int2string(char * i)
+{
+	stringstream stream;
+	union Char_Int {
+		char b[4];
+		int a;
+	} char_int;
+	memcpy(char_int.b, i, sizeof(char_int.b));
+	stream << char_int.a;
+	return stream.str();
+}
+
+string float2string(char * f)
+{
+	stringstream stream;
+	union Char_Float {
+		char b[4];
+		float a;
+	} char_float;
+	memcpy(char_float.b, f, sizeof(char_float.b));
+	stream << char_float.a;
+	return stream.str();
+}
+
+//四字节int转int
+int char2int(char * i)
+{
+	union Char_Int {
+		char b[4];
+		int a;
+	} char_int;
+	memcpy(char_int.b, i, sizeof(char_int.b));
+	return char_int.a;
+}
+
+//四字节float转float
+float char2float(char * f)
+{
+	union Char_Float {
+		char b[4];
+		float a;
+	} char_float;
+	memcpy(char_float.b, f, sizeof(char_float.b));
+	return char_float.a;
+}
+
+
+
+

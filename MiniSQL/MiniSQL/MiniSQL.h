@@ -47,7 +47,7 @@ public:
 	int attriNum; //number of the attributes
 	vector<Attribute> attributes; //list of the attributes
 	int recNum;
-	int recLength; //length of a record
+	int recLength; //length of a record(一个record有多少byte，固定值)
 	int blockNum;
 	int fileTail; //文件尾的offset作为Block读取的参考
 	Table() = default;
@@ -55,7 +55,7 @@ public:
 		: name(n)
 	{ };
 	Table(string n, int attrNum, std::vector<Attribute> attrs)
-		: name(n), attriNum(attrNum), attributes(attrs), recNum(0), blockNum(0),fileTail(0)
+		: name(n), attriNum(attrNum), attributes(attrs), recNum(0), blockNum(1),fileTail(0)
 	{
 		int length = 0;
 		for (auto elem : attrs)
@@ -113,3 +113,12 @@ public:
 	vector<Row> rows;
 };
 
+//在不同类型之间转换的函数
+char* string2int(string s); //将string转换为四字节表示的int
+char* string2float(string s); //将string转换为四字节表示的int
+
+string int2string(char * i); //将四字节表示的int转换为string
+string float2string(char * f); //将四字节表示的float转换为string
+
+int char2int(char * i); //将四字节表示的int转换为int
+float char2float(char * f); //将四字节表示的float转换为float
