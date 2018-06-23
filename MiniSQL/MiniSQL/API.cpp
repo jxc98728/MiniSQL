@@ -36,22 +36,22 @@ bool API::Execute(SQLCommand sqlCommand)
 		CreateTable(sqlCommand.tableInfo);
 		break;
 	case DropTableCmd:
-		DropTable(sqlCommand.tableName);
+		DropTable(sqlCommand.tableInfo.name);
 		break;
 	case CreateIndexCmd:
 		CreateIndex(sqlCommand.indexInfo);
 		break;
 	case DropIndexCmd:
-		DropIndex(sqlCommand.indexName);
+		DropIndex(sqlCommand.indexInfo.indexName);
 		break;
 	case SelectCmd:
-		Select(sqlCommand.tableName, sqlCommand.condList, sqlCommand.attriNameList);
+		Select(sqlCommand.tableInfo.name, sqlCommand.condList, sqlCommand.attriNameList);
 		break;
 	case InsertCmd:
-		Insert(sqlCommand.tableName, sqlCommand.valuesList);
+		Insert(sqlCommand.tableInfo.name, sqlCommand.valuesList);
 		break;
 	case DeleteCmd:
-		Delete(sqlCommand.tableName, sqlCommand.condList);
+		Delete(sqlCommand.tableInfo.name, sqlCommand.condList);
 		break;
 	default:
 		break;
@@ -72,13 +72,14 @@ bool API::CreateTable(Table table)
 	api->rm->createTable(table.name);
 
 	//对表中的primary key和unique直接创建index
+	//WARNING:这里的index名字和属性名相同，属于预先创建
 	Index idtemp;
 	int i = 0;
 	for (auto elem : table.attributes) {
 		if (elem.PK == true || elem.unique == true) {
-			idtemp.tableName = table.name; idtemp.indexName = elem.name;
-			idtemp.type = elem.type; idtemp.columnIndex = i;
-			idtemp.blockNum = table.blockNum;
+			idtemp.tableName = table.name; idtemp.attributeName = elem.name;
+			idtemp.type = elem.type; idtemp.indexName = elem.name;
+			api->rm->indexm->createIndex(table.name, elem.name, elem.type);
 			api->cm->createIndex(idtemp);
 		}
 		i++;
@@ -100,16 +101,29 @@ bool API::CreateIndex(Index index)
 		cerr << "Index " << index.indexName << " exists." << endl;
 		return false;
 	}
-
-	//TODO:判断是否有这一属性由Interpreter完成
-	// check if the attribute is unique
 	Table temp;
 	temp = api->cm->getTable(index.tableName);
-	if (temp.attributes[index.columnIndex].unique == false && temp.attributes[index.columnIndex].PK == false) {
-		cerr << "Attribute " << temp.attributes[index.columnIndex].name << " is not unique." << endl;
+	//判断是否有这一属性
+	int flag = 0;
+	for (auto elem : temp.attributes) {
+		if (elem.name == index.attributeName) {
+			flag = 1;
+		}
+	}
+	if (flag == 0) {
+		cerr << "Attribute " << index.attributeName << " does not exist." << endl;
+	}
+
+	// check if the attribute is unique;
+	for (auto elem : temp.attributes) {
+		if (elem.name == index.attributeName && elem.PK == false && elem.unique == false) {
+			cerr << "Attribute " << elem.name << " is not unique." << endl;
+			return false;
+		}
 	}
 
 	// create the index
+	api->rm->indexm->createIndex(index.tableName, index.attributeName, index.type);
 	api->cm->createIndex(index);
 	api->cm->writeIndexes();
 
@@ -151,7 +165,7 @@ bool API::Delete(string tableName, vector<Condition> condList)
 	// check if the table exist
 	Table &table = api->cm->getTable(tableName);
 	if (!api->cm->tableExist(tableName)) {
-		cerr << "Table " << tableName << " does not exist" << endl;
+		cerr << "Table " << tableName << " does not exist." << endl;
 		return false;
 	}
 
@@ -164,11 +178,13 @@ bool API::Select(string tableName, vector<Condition> condList, vector<string> at
 {
 	// check if the table exist
 	if (!api->cm->tableExist(tableName)) {
-		cerr << "Table " << tableName << " does not exist" << endl;
+		cerr << "Table " << tableName << " does not exist." << endl;
 		return false;
 	}
 
 	// TODO:select and return the records( type: records )
+
+
 
 	return true;
 }
@@ -177,7 +193,7 @@ bool API::Insert(string tableName, vector<string> valuesList)
 {
 	// check if the table exist
 	if (!api->cm->tableExist(tableName)) {
-		cerr << "Table " << tableName << " does not exist" << endl;
+		cerr << "Table " << tableName << " does not exist." << endl;
 		return false;
 	}
 
