@@ -19,24 +19,12 @@ class Attribute {
 public:
 	string name;
 	int type;
-	int charlength;
 	bool PK; //primary key
 	bool unique;
 	Attribute() = default;
 	Attribute(string n, int t, int l, bool p, bool u)
-		:name(n), type(t), charlength(l), PK(p), unique(u)
+		:name(n), type(t), PK(p), unique(u)
 	{ };
-	//method .size() 返回这一属性的element所占空间
-	inline int size() {
-		switch (type) {
-		case 0:
-			return sizeof(int);
-		case 1:
-			return sizeof(float);
-		case 2:
-			return  charlength + 1;
-		}
-	}
 	void show();
 };
 
@@ -58,9 +46,10 @@ public:
 		: name(n), attriNum(attrNum), attributes(attrs), recNum(0), blockNum(1),fileTail(0)
 	{
 		int length = 0;
-		for (auto elem : attrs)
+		/*for (auto elem : attrs) {
 			length += elem.size();
-		recLength = length;
+		}
+		recLength = length;*/
 	}
 	void show();
 };
@@ -70,15 +59,13 @@ class Index {
 public:
 	string tableName;
 	string indexName;
+	string attributeName;
 	int type; //TODO:创建的时候赋值type
-	int columnIndex; //which column in the sequential attributes
-	int blockNum; //number of blocks in the B+Tree
 	Index() = default;
-	Index(string tbName, string idName, int column)
-		:tableName(tbName), indexName(idName), columnIndex(column)
-	{ /*attrLength and blockNum assigned from the data*/ }
+	Index(string tbName, string idName, string attr)
+		:tableName(tbName), indexName(idName), attributeName(attr)
+	{ }  //TODO:在API内赋值type
 };
-
 
 /* Block类用于buffermanager中缓存的写入与读取,大小为4K bytes
    4K byte为真实大小，实际文件用二进制文件读写，方便确定位置
@@ -91,7 +78,6 @@ public:
 	int size; //当前block已用空间的大小
 	bool isDirty; //isDirty = 1表示有待写回文件
 	char content[BLOCK_SIZE]; //block中的数据 char[4096]
-
 public:
 	Block();
 	Block(string table);
@@ -114,21 +100,22 @@ public:
 	vector<Row> rows;
 };
 
-//在Interpreter中叫Clause,之后整合的时候统一一下
+enum { Gt, Lt, Ge, Le, Eq, Ne };
 class Condition {
 public:
 	string attriName;
 	int columnNum; //属性在attributes中的index
 	string cond;
 	int opcode;
-	/*
-	#0: >
-	#1: <
-	#2: >=
-	#3. <=
-	#4: =
-	#5: !=
-	*/
+};
+
+class SQLCommand {
+public:
+	Table tableInfo;
+	Index indexInfo;
+	int opName;
+	vector<Condition> condList;
+	vector<string> valuesList;
 };
 
 //在不同类型之间转换的函数
