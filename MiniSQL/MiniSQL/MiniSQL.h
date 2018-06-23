@@ -70,8 +70,8 @@ class Index {
 public:
 	string tableName;
 	string indexName;
+	int type; //TODO:创建的时候赋值type
 	int columnIndex; //which column in the sequential attributes
-	int attrLength; //attribute's length of the index
 	int blockNum; //number of blocks in the B+Tree
 	Index() = default;
 	Index(string tbName, string idName, int column)
@@ -107,10 +107,28 @@ public:
 class Row {
 public:
 	vector<string> columns;//一行record由各列上的值组成
+	Row() = default;
 };
 class Records { //查询返回的records是row的集合
 public:
 	vector<Row> rows;
+};
+
+//在Interpreter中叫Clause,之后整合的时候统一一下
+class Condition {
+public:
+	string attriName;
+	int columnNum; //属性在attributes中的index
+	string cond;
+	int opcode;
+	/*
+	#0: >
+	#1: <
+	#2: >=
+	#3. <=
+	#4: =
+	#5: !=
+	*/
 };
 
 //在不同类型之间转换的函数

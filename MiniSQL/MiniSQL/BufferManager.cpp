@@ -39,7 +39,7 @@ void BufferManager::block2buf(Block & block)
 	return;
 }
 
-Block BufferManager::readBlock(Table table, int blockid)
+Block& BufferManager::readBlock(Table table, int blockid)
 {
 	Block block(table.name,blockid);
 	string path = table.name + ".dat";

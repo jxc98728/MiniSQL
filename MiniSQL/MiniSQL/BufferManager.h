@@ -33,7 +33,7 @@ public: //先在buffer中查找块，找不到则从文件读到buffer
 	void block2buf(Block &block); //将一个块用LRU规则加载至buffer中
 
 public: //buffermanager <-> file BLOCK读写
-	Block readBlock(Table table, int blockid);
+	Block& readBlock(Table table, int blockid);
 	void writeBlock(Block &block);//在替换时if block.isDirty=true写回
 	void allWrite();//析构时调用
 };

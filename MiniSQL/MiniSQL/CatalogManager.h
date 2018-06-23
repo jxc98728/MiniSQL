@@ -32,8 +32,8 @@ public:
 	void dropIndex(string indexName);
 	bool tableExist(string tableName);//操作是否合法用exist函数判断
 	bool indexExist(string indexName);
-	Table getTable(string tableName); //返回整个Table的信息
-	Index getIndex(string indexName);
+	Table& getTable(string tableName); //返回整个Table的信息
+	Index& getIndex(string indexName);
 	void listTables();
 	void listIndexes();
 	int attriIndex(Table& table, string attriName);//返回属性在表中的序号，-1代表不存在

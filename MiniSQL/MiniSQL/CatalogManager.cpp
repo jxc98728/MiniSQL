@@ -164,7 +164,7 @@ bool CatalogManager::indexExist(string indexName)
 	return false;
 }
 
-Table CatalogManager::getTable(string tableName)
+Table& CatalogManager::getTable(string tableName)
 {
 	Table result;
 	for (int i = 0; i < tableNum; i++) {
@@ -176,7 +176,7 @@ Table CatalogManager::getTable(string tableName)
 	return result;
 }
 
-Index CatalogManager::getIndex(string indexName)
+Index& CatalogManager::getIndex(string indexName)
 {
 	Index result;
 	for (int i = 0; i < indexNum; i++) {
