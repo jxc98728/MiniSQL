@@ -118,12 +118,9 @@ public:
 	vector<string> valuesList;
 };
 
-//在不同类型之间转换的函数
-char* string2int(string s); //将string转换为四字节表示的int
-char* string2float(string s); //将string转换为四字节表示的int
+//在不同类型之间转换的函数 done
+char* string2int(string s); //将string转换为四字节表示的int done
+char* string2float(string s); //将string转换为四字节表示的int done
 
-string int2string(char * i); //将四字节表示的int转换为string
-string float2string(char * f); //将四字节表示的float转换为string
-
-int char2int(char * i); //将四字节表示的int转换为int
-float char2float(char * f); //将四字节表示的float转换为float
+int char2int(char * i); //将四字节表示的int转换为int done
+float char2float(char * f); //将四字节表示的float转换为float done

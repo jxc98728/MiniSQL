@@ -21,23 +21,10 @@ void RecordManager::insertRecord(Table & table, Row & row)
 {
 	Block &blockptr = bufferm->findBlk(table, table.fileTail);
 	char temp[BLOCK_SIZE];
-	int offset = 1;
-	temp[0] = 1; //valid byte
+	int offset = 0;
 	//把row中的内容按照attribute的类型和顺序译为char数组
-	for (int i = 0; i < table.attriNum; i++) {
-		if (table.attributes[i].type == 0) { //int
-			memcpy(temp + offset, string2int(row.columns[i]), 4);
-			offset += 4;
-		}
-		else if (table.attributes[i].type == -1) {// float
-			memcpy(temp + offset, string2int(row.columns[i]), 4);
-			offset += 4;
-		}
-		else {
-			memcpy(temp + offset, string2int(row.columns[i]), table.attributes[i].type);
-			offset += table.attributes[i].type; //char(n)
-		}
-	}
+	memset(temp, 0, BLOCK_SIZE);
+	memcpy(temp, row2byte(table, row), table.recLength + 1);
 	if (blockptr.size + table.recLength + 1 > BLOCK_SIZE) {
 		Block newBlock(table.name, table.blockNum);
 		table.blockNum += 1;
@@ -152,7 +139,7 @@ Records& RecordManager::selectRecord(const Table & table, const vector<Condition
 					if (blockptr.content[byte] == 0) // has deleted
 						continue; 
 					row = byte2row(table, blockptr.content + byte);
-					if (Comparator(table, row, cond) == true) { //符合条件，应该被删除
+					if (Comparator(table, row, cond) == true) {
 						result.rows.push_back(row);
 					}
 				}
@@ -161,7 +148,6 @@ Records& RecordManager::selectRecord(const Table & table, const vector<Condition
 		}
 	}
 
-	//读取Blocks并在buffermanager中把这些offset的valid byte都置0
 	//由IndexManager找到的offset直接就是valid byte所在的位置
 	for (auto elem : temp) {
 		int offrecord = 0;
@@ -173,7 +159,8 @@ Records& RecordManager::selectRecord(const Table & table, const vector<Condition
 }
 
 /*---------------------------辅助函数-------------------------------*/
-//将以字节表示的数据转换为row（string）的形式
+
+//将以字节表示的数据转换为row（string）的形式 done
 Row RecordManager::byte2row(Table table, char * src)
 {
 	Row row;
@@ -181,11 +168,11 @@ Row RecordManager::byte2row(Table table, char * src)
 	src += 1; //overread the valid byte
 	for (int i = 0; i < table.attriNum; i++) {
 		if (table.attributes[i].type == 0) { //INT
-			temp = int2string(src);
+			temp = to_string(char2int(src));
 			src += 4;
 		}
 		else if(table.attributes[i].type == -1){ //FLOAT
-			temp = float2string(src);
+			temp = to_string(char2float(src));
 			src += 4;
 		}
 		else { //CHAR(n)
@@ -195,6 +182,31 @@ Row RecordManager::byte2row(Table table, char * src)
 		row.columns.push_back(temp);
 	}
 	return row;
+}
+
+//把一行row转换为byte数据 done
+char * RecordManager::row2byte(Table table, Row row)
+{
+	char result[BLOCK_SIZE];
+	memset(result, 0, BLOCK_SIZE);
+	int offset = 0;
+	
+	//把row中的内容按照attribute的类型和顺序译为char数组
+	for (int i = 0; i < table.attriNum; i++) {
+		if (table.attributes[i].type == 0) { //int
+			memcpy(result + offset, string2int(row.columns[i]), 4);
+			offset += 4;
+		}
+		else if (table.attributes[i].type == -1) {// float
+			memcpy(result + offset, string2float(row.columns[i]), 4);
+			offset += 4;
+		}
+		else {
+			memcpy(result +offset, row.columns[i].c_str(), table.attributes[i].type);
+			offset += table.attributes[i].type; //char(n)
+		}
+	}
+	return result;
 }
 
 //用于一行record（string）和条件的判断

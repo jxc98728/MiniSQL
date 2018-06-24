@@ -10,7 +10,7 @@ int main() {
 
 	Attribute a1("sid", 10, 1, 1);
 	Attribute a2("name", 8, 0, 0);
-	Attribute a3("age", -1, 0, 0);
+	Attribute a3("age", 0, 0, 0);
 	vector<Attribute> as = { a1, a2,a3 };
 
 	Table t1("student", 3, as);
@@ -27,9 +27,15 @@ int main() {
 	c1.cond = "Jack";
 	c1.opcode = Eq;
 	vector<Condition> c = { c1 };
-	row1.columns = { "1111111111","Jack","18"};
-
+	row1.columns = { "111111111","Jack","18"};
+	t1.fileTail = 100; //test,注意要在插入中修改
+	/*char result[4096];
+	memset(result, 0, BLOCK_SIZE);
+	rm.row2byte(t1, row1);
+	memcpy(result, rm.row2byte(t1, row1), t1.recLength);*/
 	rm.insertRecord(t1, row1);
+
+	/*row2 = rm.byte2row(t1, result);*/
 	rst = rm.selectRecord(t1, c);
 	system("pause");
 	return 0;

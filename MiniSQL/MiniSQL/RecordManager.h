@@ -29,6 +29,7 @@ public:
 	IndexManager *indexm;
 public:
 	Row byte2row(Table table, char* src); //将以字节表示的数据转换为row（string）的形式
+	char* row2byte(Table table, Row row); //将以字符串表示的数据（一行row）转换为char数组的形式
 	bool Comparator(Table table, Row row, vector<Condition> conditions); //在遍历文件的数据时判断是否满足conditions
 public:
 	RecordManager() = delete;
@@ -41,7 +42,7 @@ public:
 
 	//insert/delete:api调用的接口，插入/删除数据到buffer中
 	//（务必注意是写到buffer中的块！）
-	void insertRecord(Table& table, Row& row);
+	void insertRecord(Table& table, Row& row); //done
 	void deleterecord(const Table& table, const vector<Condition> cond);
 	Records& selectRecord(const Table& table, const vector<Condition> cond);
 	~RecordManager() = default;

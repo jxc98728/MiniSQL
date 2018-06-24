@@ -121,26 +121,15 @@ char * string2float(string s)
 
 string int2string(char * i)
 {
-	stringstream stream;
-	union Char_Int {
-		char b[4];
-		int a;
-	} char_int;
-	memcpy(char_int.b, i, sizeof(char_int.b));
-	stream << char_int.a;
-	return stream.str();
+	int a = char2int(i);
+	cout << a << endl;
+	return to_string(a);
 }
 
 string float2string(char * f)
 {
-	stringstream stream;
-	union Char_Float {
-		char b[4];
-		float a;
-	} char_float;
-	memcpy(char_float.b, f, sizeof(char_float.b));
-	stream << char_float.a;
-	return stream.str();
+	float a = char2float(f);
+	return to_string(a);
 }
 
 //ËÄ×Ö½Úint×ªint
