@@ -2,7 +2,7 @@
 using namespace std;
 
 
-IndexManager::IndexManager() {}
+IndexManager::IndexManager(){}
 
 IndexManager::~IndexManager()
 {
@@ -81,7 +81,7 @@ bool IndexManager::createIndex(const string & tableName, const string & indexNam
 	{
 		if (type == 0)
 		{
-			BPlusTree<int> * ptrTree = new BPlusTree<int>(sizeof(int), 4092 / (sizeof(int) + 4));
+			BPlusTree<int> * ptrTree = new BPlusTree<int>(sizeof(int), 4092 / (sizeof(int) + 4));	
 			while (!file.eof())
 			{
 				getline(file, line);
@@ -97,7 +97,7 @@ bool IndexManager::createIndex(const string & tableName, const string & indexNam
 		else if (type == -1)
 		{
 			BPlusTree<float> * ptrTree = new BPlusTree<float>(sizeof(float), 4092 / (sizeof(float) + 4));
-
+			
 			while (!file.eof())
 			{
 				getline(file, line);
@@ -114,7 +114,7 @@ bool IndexManager::createIndex(const string & tableName, const string & indexNam
 		else
 		{
 			BPlusTree<string> * ptrTree = new BPlusTree<string>(type, 4092 / (type + 4));
-
+			
 			while (!file.eof())
 			{
 				getline(file, line);
@@ -145,12 +145,12 @@ bool IndexManager::createIndex(const string & tableName, const string & indexNam
 		}
 		else
 		{
-			BPlusTree<string> * ptrTree = new BPlusTree<string>(type, 4092 / (type + 4));
+			BPlusTree<string> * ptrTree = new BPlusTree<string>(type, 4092 / (type + 4));	
 			str_treelist.push_back(*ptrTree);
 			strTreeList[tableName + "#" + indexName] = str_treelist.size();
 		}
 	}
-
+	
 	file.close();
 	return true;
 }
@@ -165,54 +165,54 @@ bool IndexManager::dropIndex(const string tableName, const string & indexName, i
 
 	switch (type)
 	{
-	case 0:
-	{
-		tree_id = intTreeList[tableName + "#" + indexName];
-
-		if (tree_id)
+		case 0: 
 		{
-			intTreeList[tableName + "#" + indexName] = 0;
-			int_treelist.erase(int_treelist.begin() + tree_id - 1);
-			return true;
+			tree_id = intTreeList[tableName + "#" + indexName];
+			
+			if (tree_id)
+			{
+				intTreeList[tableName + "#" + indexName] = 0;
+				int_treelist.erase(int_treelist.begin() + tree_id - 1);
+				return true;
+			}
+			else {
+				return false;
+			}
+			break;
 		}
-		else {
-			return false;
-		}
-		break;
-	}
 
-	case -1:
-	{
-		tree_id = fltTreeList[tableName + "#" + indexName];
-
-		if (tree_id)
+		case -1: 
 		{
-			fltTreeList[tableName + "#" + indexName] = 0;
-			flt_treelist.erase(flt_treelist.begin() + tree_id - 1);
-			return true;
-		}
-		else {
-			return false;
-		}
-		break;
-	}
+			tree_id = fltTreeList[tableName + "#" + indexName];
 
-	default:
-	{
-		tree_id = strTreeList[tableName + "#" + indexName];
+			if (tree_id)
+			{
+				fltTreeList[tableName + "#" + indexName] = 0;
+				flt_treelist.erase(flt_treelist.begin() + tree_id - 1);
+				return true;
+			}
+			else {
+				return false;
+			}
+			break;
+		}
 
-		if (tree_id)
+		default: 
 		{
-			strTreeList[tableName + "#" + indexName] = 0;
-			str_treelist.erase(str_treelist.begin() + tree_id - 1);
-			return true;
-		}
-		else {
-			return false;
-		}
-		break;
-	}
+			tree_id = strTreeList[tableName + "#" + indexName];
 
+			if (tree_id)
+			{
+				strTreeList[tableName + "#" + indexName] = 0;
+				str_treelist.erase(str_treelist.begin() + tree_id - 1);
+				return true;
+			}
+			else {
+				return false;
+			}
+			break;
+		}
+		
 	}
 
 }
@@ -221,7 +221,7 @@ bool IndexManager::dropIndex(const string tableName, const string & indexName, i
 bool IndexManager::insert(const string tableName, const string & indexName, const string & key, int type, int offset)
 {
 	int tree_id;
-
+	
 	switch (type)
 	{
 	case 0:
@@ -322,7 +322,7 @@ int IndexManager::selectEqual(const string tableName, const string & indexName, 
 	{
 		tree_id = intTreeList[tableName + "#" + indexName];
 
-		if (tree_id)
+		if (tree_id) 
 		{
 			temp_offset = int_treelist[tree_id - 1].find(atoi(key.c_str()));
 			if (temp_offset >= 0) {

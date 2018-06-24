@@ -1,8 +1,8 @@
 #pragma once
 /*
-BPlusTree用作IndexManager的索引数据结构，存在内存中，
-关闭程序后再次启动根据index的information重建BPlusTree
-TODO:这里为了方便IndexManager模块测试先用了别人的BPlusTree，之后要用自己代码替换
+	BPlusTree用作IndexManager的索引数据结构，存在内存中，
+	关闭程序后再次启动根据index的information重建BPlusTree
+	TODO:这里为了方便IndexManager模块测试先用了别人的BPlusTree，之后要用自己代码替换
 */
 #include <iostream>
 #include <vector>
@@ -47,7 +47,7 @@ public:
 		cout << "Keys [" << id << "]: ";
 		for (int i = 0; i < this->cnt; i++) {
 			cout << keys[i] << ": " << keyOffset[i] << " ";
-
+			
 		}
 		cout << endl;
 	}
