@@ -1,5 +1,6 @@
 #include "BufferManager.h"
 using namespace std;
+//通过list的push_head和pop已经实现了LRU
 
 BufferManager::~BufferManager()
 {
@@ -20,7 +21,7 @@ Block & BufferManager::findBlk(Table table, int offset)
 		writeBlock(*(buffer.end()));
 		buffer.pop_back();
 	}
-	buffer.push_front(readBlock(table,offset));
+	readBlock(table,offset);
 	
 	return (buffer.front());//返回队列最前的block
 }
@@ -31,15 +32,15 @@ void BufferManager::block2buf(Block & block)
 	for (list<Block>::iterator i = buffer.begin(); i != buffer.end(); i++) {
 		if (i->tableName == block.tableName && i->blockid == block.blockid) {
 			buffer.splice(buffer.begin(), buffer, i, std::next(i));
-			return;
+			return ;
 		}
 	}
 	//此时buffer中没有该块，则将block直接放到list的head位置
-	buffer.push_front(block);
-	return;
+	buffer.push_front(block) ;
+	return ;
 }
 
-Block& BufferManager::readBlock(Table table, int blockid)
+Block BufferManager::readBlock(Table table, int blockid)
 {
 	Block block(table.name,blockid);
 	string path = table.name + ".dat";
@@ -58,6 +59,7 @@ Block& BufferManager::readBlock(Table table, int blockid)
 		block.size = table.fileTail % BLOCK_SIZE;
 	}
 	block2buf(block); //写入buffer缓冲区
+	block.show();
 	File.close();
 	return block;
 }
@@ -90,5 +92,5 @@ void BufferManager::allWrite()
 	for (list<Block>::iterator i = buffer.begin(); i != buffer.end(); i++) {
 		writeBlock(*i);
 	}
-	return;
+	return ;
 }

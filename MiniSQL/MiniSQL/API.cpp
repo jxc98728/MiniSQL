@@ -1,4 +1,5 @@
 #include "API.h"
+#include "MiniSQL.h"
 using namespace std;
 //全局的static对象
 API *API::api = new API();
@@ -30,6 +31,10 @@ API::~API()
 //Execute为唯一对上Interpreter负责的函数，这里注意要添加sqlCommand的变量
 bool API::Execute(SQLCommand sqlCommand)
 {
+	vector<string >attriNameList;
+	for (int i = 0; i < sqlCommand.tableInfo.attributes.size(); i++) {
+		attriNameList.push_back(sqlCommand.tableInfo.attributes[i].name);
+	}
 	switch (sqlCommand.opName)
 	{
 	case CreateTableCmd:
@@ -45,7 +50,7 @@ bool API::Execute(SQLCommand sqlCommand)
 		DropIndex(sqlCommand.indexInfo.indexName);
 		break;
 	case SelectCmd:
-		Select(sqlCommand.tableInfo.name, sqlCommand.condList, sqlCommand.attriNameList);
+		Select(sqlCommand.tableInfo.name, sqlCommand.condList, attriNameList);
 		break;
 	case InsertCmd:
 		Insert(sqlCommand.tableInfo.name, sqlCommand.valuesList);
@@ -220,6 +225,8 @@ bool API::Insert(string tableName, vector<string> valuesList)
 		row.columns.push_back(valuesList[i]);
 	}
 	api->rm->insertRecord(tableInfo, row);
+	api->cm->getTable(tableName).recNum++;
+	api->cm->getTable(tableName).fileTail += (api->cm->getTable(tableName).recLength + 1);
 
 	return true;
 }

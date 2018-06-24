@@ -4,7 +4,7 @@
 void RecordManager::createTable(string tableName)
 {
 	string fileName = tableName + ".dat";
-	fstream file(fileName);
+	ofstream file(fileName);
 	file.close();
 	return;
 }
@@ -19,9 +19,10 @@ void RecordManager::dropTable(string tableName)
 //将row（即一条record）插入table对应的最后一个block（在buffer中而非直接在文件中）
 void RecordManager::insertRecord(Table & table, Row & row)
 {
-	Block* blockptr = &bufferm->findBlk(table, table.fileTail);
+	Block &blockptr = bufferm->findBlk(table, table.fileTail);
 	char temp[BLOCK_SIZE];
-	int offset = 0;
+	int offset = 1;
+	temp[0] = 1; //valid byte
 	//把row中的内容按照attribute的类型和顺序译为char数组
 	for (int i = 0; i < table.attriNum; i++) {
 		if (table.attributes[i].type == 0) { //int
@@ -37,16 +38,18 @@ void RecordManager::insertRecord(Table & table, Row & row)
 			offset += table.attributes[i].type; //char(n)
 		}
 	}
-	if (blockptr->size + table.recLength + 1 > BLOCK_SIZE) {
+	if (blockptr.size + table.recLength + 1 > BLOCK_SIZE) {
 		Block newBlock(table.name, table.blockNum);
 		table.blockNum += 1;
 		table.fileTail += BLOCK_SIZE * (table.blockNum - 1) + table.recLength + 1;
 		newBlock.insertRecord(temp,table.recLength);
-		bufferm->block2buf(*blockptr);
+		bufferm->block2buf(blockptr);
 		return;
 	}
 	//在现有的块中insert
-	blockptr->insertRecord(temp, table.recLength);
+	blockptr.insertRecord(temp, table.recLength);
+	blockptr.isDirty = true;
+	bufferm->allWrite(); //test
 	return;
 }
 
@@ -58,9 +61,10 @@ void RecordManager::deleterecord(const Table & table, const vector<Condition> co
 	set<int > temp;	//找出目标的offsets存于set<int > temp
 	Row row;
 	Block blockptr;
-	SearchResult.clear();
+	indexm->SearchResult.clear();
 
 	for (int i = 0; i < cond.size(); i++) {
+		indexm->SearchResult.clear();
 		//在这一条件的属性为PK或unique时可以通过IndexManager索引查找
 		if (table.attributes[cond[i].columnNum].PK == true || table.attributes[cond[i].columnNum].unique == true) {
 			if (cond[i].opcode == 4) { //==
@@ -74,10 +78,11 @@ void RecordManager::deleterecord(const Table & table, const vector<Condition> co
 			}
 			//如果是第一个条件取并集，否则取交集
 			if (i == 0) { 
-				set_union(temp.begin(), temp.end(), SearchResult.begin(), SearchResult.end(), temp.begin());//注意第五个参数的形式
+				temp = indexm->SearchResult;
+				//set_union(temp.begin(), temp.end(), indexm->SearchResult.begin(), indexm->SearchResult.end(),temp.begin());//注意第五个参数的形式
 			}
 			else {
-				set_intersection(temp.begin(), temp.end(), SearchResult.begin(), SearchResult.end(), temp.begin());
+				auto iter = set_intersection(temp.begin(), temp.end(), indexm->SearchResult.begin(), indexm->SearchResult.end(), inserter(temp, temp.begin()));
 			}
 		}
 		else { //条件的属性为一般属性，遍历读取.dat
@@ -114,10 +119,10 @@ Records& RecordManager::selectRecord(const Table & table, const vector<Condition
 	Row row;
 
 	set<int > temp;	//找出目标的offsets存于set<int > temp
-	Block blockptr;
-	SearchResult.clear();
+	indexm->SearchResult.clear();
 
 	for (int i = 0; i < cond.size(); i++) {
+		indexm->SearchResult.clear();
 		//在这一条件的属性为PK或unique时可以通过IndexManager索引查找
 		if (table.attributes[cond[i].columnNum].PK == true || table.attributes[cond[i].columnNum].unique == true) {
 			if (cond[i].opcode == 4) { //==
@@ -131,18 +136,21 @@ Records& RecordManager::selectRecord(const Table & table, const vector<Condition
 			}
 			//如果是第一个条件取并集，否则取交集
 			if (i == 0) {
-				set_union(temp.begin(), temp.end(), SearchResult.begin(), SearchResult.end(), temp.begin());//注意第五个参数的形式
+				temp = indexm->SearchResult;
 			}
 			else {
-				set_intersection(temp.begin(), temp.end(), SearchResult.begin(), SearchResult.end(), temp.begin());
+				auto iter = set_intersection(temp.begin(), temp.end(), indexm->SearchResult.begin(), indexm->SearchResult.end(), inserter(temp,temp.begin()));
 			}
 		}
 		else { //条件的属性为一般属性，遍历读取.dat
 			for (int j = 0; j < table.blockNum; j++) {
-				blockptr = bufferm->readBlock(table, j);
+				Block blockptr = bufferm->readBlock(table, j);
+				blockptr.show();
 				for (int byte = 0; byte < BLOCK_SIZE; byte += table.recLength) {
-					if (j*BLOCK_SIZE + byte >= table.fileTail)
+					if (j * BLOCK_SIZE + byte >= table.fileTail)
 						break;
+					if (blockptr.content[byte] == 0) // has deleted
+						continue; 
 					row = byte2row(table, blockptr.content + byte);
 					if (Comparator(table, row, cond) == true) { //符合条件，应该被删除
 						result.rows.push_back(row);
@@ -157,7 +165,7 @@ Records& RecordManager::selectRecord(const Table & table, const vector<Condition
 	//由IndexManager找到的offset直接就是valid byte所在的位置
 	for (auto elem : temp) {
 		int offrecord = 0;
-		blockptr = bufferm->findBlk(table, elem);
+		Block &blockptr = bufferm->findBlk(table, elem);
 		offrecord = elem % BLOCK_SIZE;
 		row = byte2row(table, blockptr.content + offrecord);
 	}
@@ -274,8 +282,3 @@ bool RecordManager::Comparator(Table table, Row row, vector<Condition> condition
 	}
 	return 1;
 }
-
-
-
-
-

@@ -17,14 +17,16 @@
 using namespace std;
 
 #define BLOCK_SIZE 4096 /* block of size 4K bytes */
-#define MAX_BLOCKS 64 /* 缓冲区的最大块数, 待定 */
+#define MAX_BLOCKS 16 /* 缓冲区的最大块数, 待定 */
 class BufferManager
 {
 public:
 	list<Block> buffer; //数据缓冲区
 
 public: //构造&析构
-	BufferManager() = default;
+	BufferManager() {
+		buffer.clear();
+	}
 	//析构函数要写回所有脏块
 	~BufferManager();
 
@@ -33,7 +35,7 @@ public: //先在buffer中查找块，找不到则从文件读到buffer
 	void block2buf(Block &block); //将一个块用LRU规则加载至buffer中
 
 public: //buffermanager <-> file BLOCK读写
-	Block& readBlock(Table table, int blockid);
+	Block readBlock(Table table, int blockid);
 	void writeBlock(Block &block);//在替换时if block.isDirty=true写回
 	void allWrite();//析构时调用
 };

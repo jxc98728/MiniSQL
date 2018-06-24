@@ -116,14 +116,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="API.cpp" />
-    <ClCompile Include="BPlusTree.cpp" />
     <ClCompile Include="BufferManager.cpp" />
     <ClCompile Include="CatalogManager.cpp" />
     <ClCompile Include="IndexManager.cpp" />
     <ClCompile Include="Main.cpp" />
     <ClCompile Include="MiniSQL.cpp" />
     <ClCompile Include="RecordManager.cpp" />
-    <ClCompile Include="test.cpp" />
+    <ClCompile Include="testAPI.cpp" />
+    <ClCompile Include="testBuffer.cpp" />
+    <ClCompile Include="testCatalog.cpp" />
+    <ClCompile Include="testClass.cpp" />
+    <ClCompile Include="testRecord.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="API.h" />
@@ -131,6 +134,7 @@
     <ClInclude Include="BufferManager.h" />
     <ClInclude Include="CatalogManager.h" />
     <ClInclude Include="IndexManager.h" />
+    <ClInclude Include="Interpreter.h" />
     <ClInclude Include="MiniSQL.h" />
     <ClInclude Include="RecordManager.h" />
   </ItemGroup>

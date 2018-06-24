@@ -83,7 +83,7 @@ void Attribute::show()
 		cout << " float";
 		break;
 	case 2:
-		cout << " char(" << charlength << ")";
+		cout << " char(" << type << ")";
 		break;
 	}
 	if (PK) {

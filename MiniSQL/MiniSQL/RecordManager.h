@@ -14,13 +14,14 @@
 #include <algorithm>
 #include <vector>
 #include <fstream>
+#include <iterator>
 #include "minisql.h"
 #include "indexmanager.h"
 #include "buffermanager.h"
 
-set<int> SearchResult; //实际定义在Minisql.h中，为IndexManager查询返回的全局容器变量
+//set<int> SearchResult; 实际定义在Minisql.h中，为IndexManager查询返回的全局容器变量
 using namespace std;
-enum {Gt,Lt,Ge,Le,Eq,Ne};
+
 class RecordManager
 {
 public:
@@ -30,7 +31,7 @@ public:
 	Row byte2row(Table table, char* src); //将以字节表示的数据转换为row（string）的形式
 	bool Comparator(Table table, Row row, vector<Condition> conditions); //在遍历文件的数据时判断是否满足conditions
 public:
-	RecordManager() = default;
+	RecordManager() = delete;
 	RecordManager(BufferManager *b, IndexManager* i)
 		:bufferm(b), indexm(i)
 	{};

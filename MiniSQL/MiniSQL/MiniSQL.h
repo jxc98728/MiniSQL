@@ -22,7 +22,7 @@ public:
 	bool PK; //primary key
 	bool unique;
 	Attribute() = default;
-	Attribute(string n, int t, int l, bool p, bool u)
+	Attribute(string n, int t, bool p, bool u)
 		:name(n), type(t), PK(p), unique(u)
 	{ };
 	void show();

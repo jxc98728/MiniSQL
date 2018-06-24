@@ -24,30 +24,36 @@
     <ClCompile Include="MiniSQL.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BPlusTree.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="CatalogManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="RecordManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="API.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="testClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="testBuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="testCatalog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="IndexManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="API.cpp">
+    <ClCompile Include="testRecord.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="testAPI.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MiniSQL.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="BPlusTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="BufferManager.h">
@@ -59,10 +65,16 @@
     <ClInclude Include="RecordManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="API.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="IndexManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="API.h">
+    <ClInclude Include="Interpreter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="BPlusTree.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

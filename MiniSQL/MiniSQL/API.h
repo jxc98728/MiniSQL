@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
 #include "MiniSQL.h"
-#include "Interpreter.h"
 #include "IndexManager.h"
 #include "CatalogManager.h"
 #include "RecordManager.h"
@@ -23,7 +22,6 @@ public:
 	static API *api;
 	RecordManager *rm;
 	CatalogManager *cm;
-
 	API();
 	~API();
 
@@ -46,4 +44,3 @@ public:
 
 	bool Exit();
 };
-

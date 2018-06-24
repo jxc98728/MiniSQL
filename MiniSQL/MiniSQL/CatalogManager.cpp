@@ -16,7 +16,6 @@ void CatalogManager::readTables()
 	//读入Tables.dat中的信息到vector<Table>中
 	Table table;
 	Attribute attribute;
-	int type;
 	for (int i = 0; i < tableNum; i++) {
 		file >> table.name;
 		file >> table.attriNum;
@@ -26,7 +25,6 @@ void CatalogManager::readTables()
 		for (int j = 0; j < table.attriNum; j++) {
 			file >> attribute.name;
 			file >> attribute.type;
-			file >> attribute.charlength;
 			file >> attribute.PK;
 			file >> attribute.unique;
 			table.attributes.push_back(attribute);
@@ -47,9 +45,7 @@ void CatalogManager::readIndexes()
 	{
 		file >> index.indexName;
 		file >> index.tableName;
-		file >> index.columnIndex;
-		file >> index.attrLength;
-		file >> index.blockNum;
+		file >> index.attributeName;
 		indexes.push_back(index);
 	}
 	file.close();
@@ -74,7 +70,6 @@ void CatalogManager::writeTables()
 		{
 			file << tables[i].attributes[j].name << " ";
 			file << tables[i].attributes[j].type << " ";
-			file << tables[i].attributes[j].charlength << " ";
 			file << tables[i].attributes[j].PK << " ";
 			file << tables[i].attributes[j].unique << endl;
 		}
@@ -93,9 +88,7 @@ void CatalogManager::writeIndexes()
 	{
 		file << indexes[i].indexName << " ";
 		file << indexes[i].tableName << " ";
-		file << indexes[i].columnIndex << " ";
-		file << indexes[i].attrLength << " ";
-		file << indexes[i].blockNum << endl;
+		file << indexes[i].attributeName << endl;
 	}
 	file.close();
 }
