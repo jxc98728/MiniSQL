@@ -1,88 +1,11 @@
 #pragma once
-
+#include "MiniSQL.h"
 #include <iostream>
 #include <string>
 #include <vector>
 #include <fstream>
 
 using namespace std;
-
-class Attribute {
-public:
-	string name;
-	int type;
-	bool PK; //primary key
-	bool unique;
-	Attribute() = default;
-	Attribute(string n, int t, bool p, bool u)
-		:name(n), type(t), PK(p), unique(u)
-	{ };
-	void show()
-	{
-		cout << name;
-		switch (type)
-		{
-		case 0:
-			cout << " int";
-			break;
-		case 1:
-			cout << " float";
-			break;
-		case 2:
-			cout << " char(" << type << ")";
-			break;
-		}
-		if (PK) {
-			cout << " Primary Key";
-		}
-		else if (unique) {
-			cout << " Unique";
-		}
-		cout << endl;
-	}
-};
-
-/* Table class in CatalogManager, only table info without records */
-class Table {
-public:
-	string name; //name of the table
-	int attriNum; //number of the attributes
-	vector<Attribute> attributes; //list of the attributes
-	int recNum;
-	int recLength; //length of a record(一个record有多少byte，固定值)
-	int blockNum;
-	int fileTail; //文件尾的offset作为Block读取的参考
-	Table() = default;
-	Table(string n) : name(n) { };
-	Table(string n, int attrNum, std::vector<Attribute> attrs)
-		: name(n), attriNum(attrNum), attributes(attrs), recNum(0), blockNum(1), fileTail(0)
-	{
-		int length = 0;
-		/*for (auto elem : attrs) {
-		length += elem.size();
-		}
-		recLength = length;*/
-	}
-	void show() {
-		cout << "table " << name << ":" << attriNum << " attributes" << endl;
-		for (auto elem : attributes) {
-			elem.show();
-		}
-	}
-};
-
-/* index class in IndexManager, information of a index created */
-class Index {
-public:
-	string tableName;
-	string indexName;
-	string attributeName;
-	int type; //TODO:创建的时候赋值type
-	Index() = default;
-	Index(string tbName, string idName, string attr)
-		:tableName(tbName), indexName(idName), attributeName(attr)
-	{ }  //TODO:在API内赋值type
-};
 
 //class SQLCommand {
 	/*

@@ -24,9 +24,7 @@ public:
 	list<Block> buffer; //数据缓冲区
 
 public: //构造&析构
-	BufferManager() {
-		buffer.clear();
-	}
+	BufferManager() = default;
 	//析构函数要写回所有脏块
 	~BufferManager();
 
@@ -36,6 +34,6 @@ public: //先在buffer中查找块，找不到则从文件读到buffer
 
 public: //buffermanager <-> file BLOCK读写
 	Block readBlock(Table table, int blockid);
-	void writeBlock(Block &block);//在替换时if block.isDirty=true写回
+	void writeBlock(Block &block);//在替换时if block.isDirty=true写回 done
 	void allWrite();//析构时调用
 };

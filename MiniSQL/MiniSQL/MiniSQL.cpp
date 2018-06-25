@@ -44,11 +44,6 @@ bool Block::insertRecord(char *src, int length)
 	return true;
 }
 
-void Block::setDirty()
-{
-	isDirty = true;
-}
-
 void Block::show()
 {
 	cout << "Table: " << tableName << " Blockid: " << blockid << endl;

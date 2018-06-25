@@ -19,7 +19,7 @@ void RecordManager::dropTable(string tableName)
 //将row（即一条record）插入table对应的最后一个block（在buffer中而非直接在文件中）
 void RecordManager::insertRecord(Table & table, Row & row)
 {
-	Block &blockptr = bufferm->findBlk(table, table.fileTail);
+	Block &blockptr = bufferm->findBlk(table, table.fileTail); //problem:block的size需要再赋值
 	char temp[BLOCK_SIZE];
 	int offset = 0;
 	//把row中的内容按照attribute的类型和顺序译为char数组
@@ -29,14 +29,14 @@ void RecordManager::insertRecord(Table & table, Row & row)
 		Block newBlock(table.name, table.blockNum);
 		table.blockNum += 1;
 		table.fileTail += BLOCK_SIZE * (table.blockNum - 1) + table.recLength + 1;
-		newBlock.insertRecord(temp,table.recLength);
-		bufferm->block2buf(blockptr);
+		newBlock.insertRecord(temp,table.recLength); //problem:insertRecord方法可能存在问题
+		bufferm->block2buf(newBlock);
+		blockptr.isDirty = true;
 		return;
 	}
 	//在现有的块中insert
 	blockptr.insertRecord(temp, table.recLength);
 	blockptr.isDirty = true;
-	bufferm->allWrite(); //test
 	return;
 }
 
@@ -132,7 +132,6 @@ Records& RecordManager::selectRecord(const Table & table, const vector<Condition
 		else { //条件的属性为一般属性，遍历读取.dat
 			for (int j = 0; j < table.blockNum; j++) {
 				Block blockptr = bufferm->readBlock(table, j);
-				blockptr.show();
 				for (int byte = 0; byte < BLOCK_SIZE; byte += table.recLength) {
 					if (j * BLOCK_SIZE + byte >= table.fileTail)
 						break;

@@ -12,7 +12,9 @@ Block & BufferManager::findBlk(Table table, int offset)
 	//先在buffer中查找，如果找到将其提到list最前
 	for (list<Block>::iterator i = buffer.begin(); i != buffer.end(); i++) {
 		if (i->tableName == table.name && offset >= i->blockid*BLOCK_SIZE && offset <= (i->blockid + 1)*BLOCK_SIZE) {
-			buffer.splice(buffer.begin(), buffer, i, std::next(i));
+			buffer.push_front(*i);
+			buffer.erase(i);
+			//buffer.splice(buffer.begin(), buffer, i, std::next(i));
 			return (buffer.front());
 		}
 	}
@@ -21,8 +23,8 @@ Block & BufferManager::findBlk(Table table, int offset)
 		writeBlock(*(buffer.end()));
 		buffer.pop_back();
 	}
-	readBlock(table,offset);
-	
+	readBlock(table, offset%BLOCK_SIZE);
+
 	return (buffer.front());//返回队列最前的block
 }
 
@@ -31,22 +33,23 @@ void BufferManager::block2buf(Block & block)
 	//先在buffer中查找，如果找到将其提到list最前
 	for (list<Block>::iterator i = buffer.begin(); i != buffer.end(); i++) {
 		if (i->tableName == block.tableName && i->blockid == block.blockid) {
-			buffer.splice(buffer.begin(), buffer, i, std::next(i));
-			return ;
+			buffer.push_front(*i);
+			buffer.erase(i);
+			return;
 		}
 	}
-	//此时buffer中没有该块，则将block直接放到list的head位置
-	buffer.push_front(block) ;
-	return ;
+	//将block直接放到list的head位置
+	buffer.push_front(block);
+	return;
 }
 
 Block BufferManager::readBlock(Table table, int blockid)
 {
-	Block block(table.name,blockid);
+	Block block(table.name, blockid);
 	string path = table.name + ".dat";
 	fstream File;
 	//file以二进制进行读写
-	File.open(path, ios::in | ios::out | ios::binary );
+	File.open(path, ios::in | ios::out | ios::binary);
 
 	// read the block according to blockid
 	File.seekg(blockid * BLOCK_SIZE);
@@ -59,7 +62,6 @@ Block BufferManager::readBlock(Table table, int blockid)
 		block.size = table.fileTail % BLOCK_SIZE;
 	}
 	block2buf(block); //写入buffer缓冲区
-	block.show();
 	File.close();
 	return block;
 }
@@ -71,7 +73,7 @@ void BufferManager::writeBlock(Block & block)
 	path += ".dat";
 	fstream file;
 	//file以二进制进行读写
-	file.open(path, ios::in | ios::out | ios::binary );
+	file.open(path, ios::in | ios::out | ios::binary);
 	if (!file.good()) {
 		cerr << "Fail to open file:" << path << endl;
 	}
@@ -79,12 +81,12 @@ void BufferManager::writeBlock(Block & block)
 		block.isDirty = false;//写回后就不是脏数据了
 	}
 	else {
-		return ; //不需要写回
+		return; //不需要写回
 	}
 	file.seekp(block.blockid * BLOCK_SIZE);
 	file.write(block.content, BLOCK_SIZE);
 	file.close();
-	return ;
+	return;
 }
 
 void BufferManager::allWrite()
@@ -92,5 +94,5 @@ void BufferManager::allWrite()
 	for (list<Block>::iterator i = buffer.begin(); i != buffer.end(); i++) {
 		writeBlock(*i);
 	}
-	return ;
+	return;
 }

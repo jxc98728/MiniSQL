@@ -3,6 +3,7 @@
 #include <iostream>
 using namespace std;
 
+//现阶段测试只涉及BufferManager和RecordManager，如果RecordManager能跑对就好办了
 int main() {
 	IndexManager im;
 	BufferManager bm;
@@ -28,15 +29,12 @@ int main() {
 	c1.opcode = Eq;
 	vector<Condition> c = { c1 };
 	row1.columns = { "111111111","Jack","18"};
-	t1.fileTail = 100; //test,注意要在插入中修改
-	/*char result[4096];
-	memset(result, 0, BLOCK_SIZE);
-	rm.row2byte(t1, row1);
-	memcpy(result, rm.row2byte(t1, row1), t1.recLength);*/
+	t1.fileTail = 1; //test,注意要在插入中修改
+	
 	rm.insertRecord(t1, row1);
 
-	/*row2 = rm.byte2row(t1, result);*/
 	rst = rm.selectRecord(t1, c);
+
 	system("pause");
 	return 0;
 }

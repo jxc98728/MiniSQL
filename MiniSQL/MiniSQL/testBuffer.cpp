@@ -6,25 +6,27 @@ using namespace std;
 
 //int main() {
 //	BufferManager a;
-//	char c[10] = { 'a','b','c','d','e' };
-//	Table t("book");
-//	t.fileTail = 400;
-//	t.blockNum = 1;
-//	Block result;
-//	Block b;
-//	/*Block block("book", 0);
-//	for (int i = 0; i < 100; i++) {
-//		block.insertRecord(c, 4);
-//	}
-//	block.setDirty();
-//	a.writeBlock(block);*/
-//	
-//	result = a.readBlock(t, 0);
-//	result.show();
+//	Attribute a1("sid", 10, 1, 1);
+//	Attribute a2("name", 8, 0, 0);
+//	Attribute a3("age", 0, 0, 0);
+//	vector<Attribute> as = { a1, a2,a3 };
+//	Table t1("student", 3, as);
 //
-//	b = a.findBlk(t, 100);
-//	b.show();
+//	char s[10] = { 'a','b','c','d','e' };
+//	Block block("student", 0);
+//	block.isDirty = true;
+//	block.insertRecord(s,5);
+//	//a.writeBlock(block);
 //
-//	system("pause");
+//	Block block2("student", 1);
+//	block2.isDirty = true;
+//	block2.insertRecord(s, 5);
+//	//a.writeBlock(block2);
+//	a.block2buf(block);
+//	a.block2buf(block2);
+//	a.allWrite();
+//
+//
+//	//system("pause");
 //	return 0;
 //}

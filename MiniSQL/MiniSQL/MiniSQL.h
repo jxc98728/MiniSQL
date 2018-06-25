@@ -9,9 +9,7 @@
 #include <string>
 using namespace std;
 
-#define INT 0;
-#define FLOAT 1;
-#define CHAR 2;
+/* type定义：int -1 float 0 char(n) n */
 #define BLOCK_SIZE 4096 /* block of size 4K bytes */
 
 /* Attribute consisting the info of type/length/primary key/unique */
@@ -26,6 +24,13 @@ public:
 		:name(n), type(t), PK(p), unique(u)
 	{ };
 	void show();
+	int size() {
+		if (type == -1) //INT
+			return 4;
+		else if (type == 0) //FLOAT
+			return 4;
+		else return type; //CHAR(n)
+	}
 };
 
 /* Table class in CatalogManager, only table info without records */
@@ -45,11 +50,12 @@ public:
 	Table(string n, int attrNum, std::vector<Attribute> attrs)
 		: name(n), attriNum(attrNum), attributes(attrs), recNum(0), blockNum(1),fileTail(0)
 	{
+		//计算得出reclength
 		int length = 0;
-		/*for (auto elem : attrs) {
+		for (auto elem : attrs) {
 			length += elem.size();
 		}
-		recLength = length;*/
+		recLength = length;
 	}
 	void show();
 };
@@ -58,9 +64,9 @@ public:
 class Index {
 public:
 	string tableName;
-	string indexName;
-	string attributeName;
-	int type; //TODO:创建的时候赋值type
+	string indexName; //index名字
+	string attributeName; //index对应属性名字
+	int type; //TODO:创建的时候赋值type（用catalogmanager找到该属性的type）
 	Index() = default;
 	Index(string tbName, string idName, string attr)
 		:tableName(tbName), indexName(idName), attributeName(attr)
@@ -77,13 +83,12 @@ public:
 	int blockid ; //当前block在对应的文件中的标号
 	int size; //当前block已用空间的大小
 	bool isDirty; //isDirty = 1表示有待写回文件
-	char content[BLOCK_SIZE]; //block中的数据 char[4096]
+	char content[BLOCK_SIZE]; //block中的数据 char[4096] 用二进制格式保存
 public:
 	Block();
 	Block(string table);
 	Block(string table, int blockid);
 	bool insertRecord(char* src, int length);
-	void setDirty(); //isDirty = 1
 	void show();
 	char* getContent(int start, int bytes);//读取块内数据
 	~Block() = default;//在写回文件后析构Block
@@ -93,20 +98,23 @@ public:
 class Row {
 public:
 	vector<string> columns;//一行record由各列上的值组成
-	Row() = default;
 };
 class Records { //查询返回的records是row的集合
 public:
 	vector<Row> rows;
 };
 
-enum { Gt, Lt, Ge, Le, Eq, Ne };
+enum { Gt, Lt, Ge, Le, Eq, Ne }; //五种条件判断的opcode值
 class Condition {
 public:
 	string attriName;
 	int columnNum; //属性在attributes中的index
 	string cond;
 	int opcode;
+	Condition() = default;
+	Condition(string attr, int opcode, string cond)
+		:attriName(attr), opcode(opcode), cond(cond)
+	{}; //TODO:在Interprete时把columnNum赋值上
 };
 
 class SQLCommand {
@@ -116,6 +124,7 @@ public:
 	int opName;
 	vector<Condition> condList;
 	vector<string> valuesList;
+	SQLCommand() = default; //TODO:在Interpreter中构造Command把SQLCommand成员赋值
 };
 
 //在不同类型之间转换的函数 done

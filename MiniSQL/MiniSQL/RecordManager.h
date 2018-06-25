@@ -47,4 +47,3 @@ public:
 	Records& selectRecord(const Table& table, const vector<Condition> cond);
 	~RecordManager() = default;
 };
-
