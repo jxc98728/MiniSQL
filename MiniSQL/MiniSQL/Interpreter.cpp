@@ -304,7 +304,7 @@ int Interpreter::parser(void)
 
 		while (*it != ";")
 		{
-			if (*it != "(" || *it != "," || *it != ")")
+			if (*it != "(" && *it != "," && *it != ")")
 			{
 				sqlcmd.valuesList.push_back(*it);
 			}
