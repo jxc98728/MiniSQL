@@ -179,18 +179,30 @@ bool API::Delete(string tableName, vector<Condition> condList)
 	return true;
 }
 
-bool API::Select(string tableName, vector<Condition> condList, vector<string> attrList)
+bool API::Select(Table tableName, vector<Condition> condList, vector<string> attrList)
 {
 	// check if the table exist
-	if (!api->cm->tableExist(tableName)) {
-		cerr << "Table " << tableName << " does not exist." << endl;
+	if (!api->cm->tableExist(tableName.name)) {
+		cerr << "Table " << tableName.name << " does not exist." << endl;
 		return false;
 	}
 
-	// TODO:select and return the records( type: records )
-
-
-
+	// select and return the records( type: records )
+	Records result = api->rm->selectRecord(tableName, condList);
+	if (result.rows.size() == 0) {
+		cout << "0 results are selected." << endl;
+		return true;
+	}
+	for (int i = 0; i < attrList.size(); i++) {
+		cout << attrList[i] << "  " << endl;
+	}
+	for (int i = 0; i < result.rows.size(); i++) {
+		for (int j = 0; j < attrList.size(); i++) {
+			cout << result.rows[i].columns[j] << " ";
+		}
+		cout << endl;
+	}
+	cout << result.rows.size() << " results are selected" << endl;
 	return true;
 }
 

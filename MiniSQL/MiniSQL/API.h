@@ -38,7 +38,7 @@ public:
 
 	static bool Delete(string tableName, vector<Condition> condList);
 
-	static bool Select(string tableName,vector<Condition> condList ,vector<string> attrList);
+	static bool Select(Table tableName,vector<Condition> condList ,vector<string> attrList);
 
 	static bool Insert(string tableName, vector<string> valuesList);
 
